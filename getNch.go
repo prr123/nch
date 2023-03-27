@@ -12,9 +12,22 @@ import (
     "time"
 	"log"
 	"context"
+	"ns/namecheap/nchLib"
 )
 
+
+
 func main() {
+
+	var nch nchLib.NchCred
+	// read yaml file for user, ip and key
+
+	err := nch.InitNch("nch.yaml")
+	if err != nil {
+		log.Fatalf("InitNch: %v", err)
+	}
+
+	nch.PrintNchCred()
 
 	getStr := "https://api.sandbox.namecheap.com/xml.response?ApiUser=azulTest&ApiKey=0e5d605ad8cf45fc8fa45e4c529c0448&UserName=azulTest&ClientIp=89.116.30.49&Command=namecheap.domains.check&DomainList=azulTest.com"
 	req, err := http.NewRequest("GET", getStr, nil)
@@ -22,7 +35,7 @@ func main() {
 		log.Fatalf("Req: %v", err)
 	}
 
-	ctx, cancel := context.WithTimeout(req.Context(), 2*time.Second)
+	ctx, cancel := context.WithTimeout(req.Context(), 5*time.Second)
 	defer cancel()
 
 	req = req.WithContext(ctx)
