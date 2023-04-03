@@ -9,7 +9,6 @@ import (
 	"fmt"
 	"os"
 	yaml "github.com/goccy/go-yaml"
-//    nchSdk "github.com/namecheap/go-namecheap-sdk"
     nchSdk "ns/nchReg/nchSdk"
 	)
 
@@ -25,14 +24,14 @@ type NchCred struct {
 }
 
 
-func (nch *NchCred) InitNch (yamlFilNam string) (err error) {
+func (nch *NchCred) InitNch (yamlFilNam string, dbg bool) (err error) {
 
 	info, err := os.Stat(yamlFilNam)
 	if err != nil {
 		return fmt.Errorf("os.Stat file: %s err: %v", yamlFilNam, err)
 	}
 
-	fmt.Printf("opened file: %s\nSize %d\n", yamlFilNam, info.Size())
+	if dbg {fmt.Printf("opened file: %s\nSize %d\n", yamlFilNam, info.Size())}
 
 	infil, err := os.Open(yamlFilNam)
 	if err != nil {
@@ -47,7 +46,7 @@ func (nch *NchCred) InitNch (yamlFilNam string) (err error) {
 		return fmt.Errorf("Read err: %v", err)
 	}
 
-	fmt.Printf("buf: \n%s\n", string(buf))
+	if dbg {fmt.Printf("buf: \n%s\n", string(buf))}
 
     if err := yaml.Unmarshal(buf, nch); err !=nil {
         return fmt.Errorf("error Unmarshall: %v\n", err)
@@ -102,4 +101,16 @@ func PrintClientOptions (nch *nchSdk.ClientOptions) {
 	fmt.Printf("ClientIp:  %s\n", nch.ClientIp)
     fmt.Printf("UseSandbox:%t\n", nch.UseSandbox)
     fmt.Println("**************************")
+
 }
+
+func PrintDomains(resp *nchSdk.DomainsGetListCommandResponse) {
+
+    fmt.Printf("*************** Domains [%d] *************\n", len(*resp.Domains))
+
+    for i:=0; i< len(*resp.Domains); i++ {
+        dom := (*resp.Domains)[i]
+        fmt.Printf("[%d]: %s %s\n",i+1, *(dom.ID), *(dom.Name))
+    }
+}
+
