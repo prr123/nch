@@ -9,6 +9,8 @@ import (
 	"fmt"
 	"os"
 	yaml "github.com/goccy/go-yaml"
+//    nchSdk "github.com/namecheap/go-namecheap-sdk"
+    nchSdk "ns/nchReg/nchSdk"
 	)
 
 type NchCred struct {
@@ -65,6 +67,18 @@ func (nch *NchCred) InitNch (yamlFilNam string) (err error) {
 	return nil
 }
 
+func (nch *NchCred) GetClientOpt()  (clOptRef *nchSdk.ClientOptions, err error) {
+	var clOpt nchSdk.ClientOptions
+
+	clOpt.UserName = nch.ApiUser
+	clOpt.ApiUser = nch.ApiUser
+	clOpt.ApiKey = nch.ApiKey
+	clOpt.ClientIp = nch.IP
+	clOpt.UseSandbox = nch.Sandbox
+
+	return &clOpt, nil
+}
+
 func (nch *NchCred) PrintNchCred () {
 
     fmt.Println("**** NCH Credentials *****")
@@ -76,5 +90,16 @@ func (nch *NchCred) PrintNchCred () {
 	fmt.Printf("Domain:    %s\n", nch.Domain)
 	fmt.Printf("File:      %s\n", nch.File)
 	fmt.Printf("NCP Api:   %s\n", nch.NchApi)
+    fmt.Println("**************************")
+}
+
+func PrintClientOptions (nch *nchSdk.ClientOptions) {
+
+    fmt.Println("**** Client Options *****")
+    fmt.Printf("UserName:  %s\n", nch.UserName)
+    fmt.Printf("ApiUser:   %s\n", nch.ApiUser)
+    fmt.Printf("ApiKey:    %s\n", nch.ApiKey)
+	fmt.Printf("ClientIp:  %s\n", nch.ClientIp)
+    fmt.Printf("UseSandbox:%t\n", nch.UseSandbox)
     fmt.Println("**************************")
 }
