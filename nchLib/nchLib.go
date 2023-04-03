@@ -23,6 +23,12 @@ type NchCred struct {
 	NchApi string
 }
 
+type CfNsNames struct {
+	File string
+	Domain string `yaml:"domain"`
+	Ns1 string `yaml:"ns1"`
+	Ns2 string `yaml:"ns2"`
+}
 
 func (nch *NchCred) InitNch (yamlFilNam string, dbg bool) (err error) {
 
@@ -76,6 +82,38 @@ func (nch *NchCred) GetClientOpt()  (clOptRef *nchSdk.ClientOptions, err error) 
 	clOpt.UseSandbox = nch.Sandbox
 
 	return &clOpt, nil
+}
+
+func ReadNsRec(yamlFilNam string, dbg bool) (ns *CfNsNames, err error){
+
+	var nsRec CfNsNames
+
+    infil, err := os.Open(yamlFilNam)
+    if err != nil {
+        return nil, fmt.Errorf("os.Open file: %s err: %v", yamlFilNam, err)
+    }
+
+    nsRec.File = yamlFilNam
+    buf := make([]byte, 250)
+
+    _, err = infil.Read(buf)
+    if err != nil {
+        return nil, fmt.Errorf("Read err: %v", err)
+    }
+
+    if dbg {fmt.Printf("buf: \n%s\n", string(buf))}
+
+    if err := yaml.Unmarshal(buf, &nsRec); err !=nil {
+        return nil, fmt.Errorf("error Unmarshall: %v\n", err)
+    }
+
+	if dbg {
+		fmt.Printf("File:   %s\n", nsRec.File)
+		fmt.Printf("Domain: %s\n", nsRec.Domain)
+		fmt.Printf("ns1:  %s\n", nsRec.Ns1)
+		fmt.Printf("ns2:  %s\n", nsRec.Ns2)
+	}
+	return &nsRec, nil
 }
 
 func (nch *NchCred) PrintNchCred () {
