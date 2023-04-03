@@ -6,7 +6,7 @@
 package main
 
 import (
-    "fmt"
+//    "fmt"
 //    "io/ioutil"
 //    "net/http"
 //    "time"
@@ -23,7 +23,7 @@ func main() {
 	var nchCred nchLib.NchCred
 	// read yaml file for user, ip and key
 
-	err := nchCred.InitNch("nchProd.yaml")
+	err := nchCred.InitNch("nchProd.yaml", false)
 	if err != nil {
 		log.Fatalf("InitNch: %v", err)
 	}
@@ -35,11 +35,11 @@ func main() {
         log.Fatalf("GetClientOpt: %v", err)
     }
 
-    nchLib.PrintClientOptions(clientOpt)
+//    nchLib.PrintClientOptions(clientOpt)
 
     client := nch.NewClient(clientOpt)
 
-	fmt.Printf("client: %v\n", client)
+//	fmt.Printf("client: %v\n", client)
 
 	listStr := "ALL"
 	pageSize := 100
@@ -55,16 +55,7 @@ func main() {
 		log.Fatalf("GETLIST: %v", err)
 	}
 
-	PrintDomains(domainListResp)
+	nchLib.PrintDomains(domainListResp)
 
 }
 
-func PrintDomains(resp *nch.DomainsGetListCommandResponse) {
-
-	fmt.Printf("*************** Domains [%d] *************\n", len(*resp.Domains))
-
-	for i:=0; i< len(*resp.Domains); i++ {
-		dom := (*resp.Domains)[i]
-		fmt.Printf("[%d]: %s %s\n",i+1, *(dom.ID), *(dom.Name))
-	}
-}
